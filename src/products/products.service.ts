@@ -70,6 +70,8 @@ export class ProductsService {
 
    async update(id: number, updateProductDto: UpdateProductDto) {
       try {
+         const { id:_, ...productData } = updateProductDto
+         
          await this.findOne(id);
 
          return {
@@ -78,7 +80,7 @@ export class ProductsService {
                   id
                },
                data: {
-                  ...updateProductDto
+                  ...productData
                },
             })
          }
