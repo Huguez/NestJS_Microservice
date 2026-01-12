@@ -14,12 +14,12 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-  @MessagePattern({ cmd: "create_all" })
+  @MessagePattern({ cmd: "get_all_product" })
   findAll( @Payload() pagination: Pagination ) {
     return this.productsService.findAll(pagination);
   }
 
-  @MessagePattern({ cmd: "create_by_id" })
+  @MessagePattern({ cmd: "get_product_by_id" })
   findOne(@Payload('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
   }
