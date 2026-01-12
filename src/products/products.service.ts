@@ -1,9 +1,10 @@
-import { BadRequestException, HttpCode, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from '../prisma.service';
 import { Pagination } from 'src/common/dto';
 import { Prisma } from '@prisma/client';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProductsService {
@@ -57,7 +58,7 @@ export class ProductsService {
          })
 
          if (!product) {
-            throw new NotFoundException(`Product with id: ${id}, not found`)
+            throw new RpcException({ status: HttpStatus.NOT_FOUND, message: `Product with id: ${id}, not found` })
          }
 
          return {
@@ -70,8 +71,8 @@ export class ProductsService {
 
    async update(id: number, updateProductDto: UpdateProductDto) {
       try {
-         const { id:_, ...productData } = updateProductDto
-         
+         const { id: _, ...productData } = updateProductDto
+
          await this.findOne(id);
 
          return {
@@ -108,19 +109,19 @@ export class ProductsService {
 
    private handlerExceptions(error: any) {
 
-      if (error.status === 404) {
-         throw new NotFoundException(error.message)
+      if (error.error.status === HttpStatus.NOT_FOUND) {
+         throw new RpcException({ status: HttpStatus.NOT_FOUND, message: error.error.message })
       }
-
+      
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
          if (error.code === 'P2002') {
-            throw new BadRequestException('Error: instance/attribute duplicate')
+            throw new RpcException({ status: HttpStatus.BAD_REQUEST, message: 'Error: instance/attribute duplicate' })
          }
       } else if (error instanceof Prisma.PrismaClientRustPanicError) {
-         throw new InternalServerErrorException('Error: Prisma engine fail.')
+         throw new RpcException({ status: HttpStatus.INTERNAL_SERVER_ERROR, message: 'Error: Prisma engine fail.' })
       } else {
-         this.logger.error(error.message);
-         throw new InternalServerErrorException("Check Logs")
+         this.logger.error(error);
+         throw new RpcException({ status: HttpStatus.INTERNAL_SERVER_ERROR, message: "Check Logs" })
       }
    }
 }
