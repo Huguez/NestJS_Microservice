@@ -30,19 +30,10 @@ npm install
 
 3.- rename .env.template to .env and write variables
 ```
-```
-
-4.- Set up the database with Docker
-```
-docker-compose up -d
+PORT = *******
 ```
 
 5.- Run the service in development
 ```
 npm run dev
-```
-
-6.- Execute Seed
-```
-GET http://localhost:3000/api/seed
 ```
