@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from '../prisma.service';
@@ -133,12 +133,12 @@ export class ProductsService {
    }
 
    private handlerExceptions(error: any) {
-      
+
       if (error.error.status === HttpStatus.NOT_FOUND) {
          throw new RpcException({ status: HttpStatus.NOT_FOUND, message: error.error.message })
       }
 
-      if (error.error.status === HttpStatus.BAD_REQUEST ) {
+      if (error.error.status === HttpStatus.BAD_REQUEST) {
          throw new RpcException({ status: HttpStatus.BAD_REQUEST, message: error.error.message })
       }
 

@@ -7,7 +7,8 @@ import { Pagination } from 'src/common/dto';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+
+  constructor(private readonly productsService: ProductsService) { }
 
   @MessagePattern({ cmd: "create_product" })
   create(@Payload() createProductDto: CreateProductDto) {
@@ -15,7 +16,7 @@ export class ProductsController {
   }
 
   @MessagePattern({ cmd: "get_all_product" })
-  findAll( @Payload() pagination: Pagination ) {
+  findAll(@Payload() pagination: Pagination) {
     return this.productsService.findAll(pagination);
   }
 
@@ -30,12 +31,12 @@ export class ProductsController {
   }
 
   @MessagePattern({ cmd: "delete_product" })
-  remove(@Payload('id', ParseIntPipe ) id: number) {
+  remove(@Payload('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
   }
 
   @MessagePattern({ cmd: "validate_products" })
-  validate( @Payload() ids: number[] ){
-    return this.productsService.validateProducts( ids )
+  validate(@Payload() ids: number[]) {
+    return this.productsService.validateProducts(ids)
   }
 }
