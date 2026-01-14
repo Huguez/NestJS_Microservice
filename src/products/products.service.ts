@@ -107,12 +107,41 @@ export class ProductsService {
       }
    }
 
-   private handlerExceptions(error: any) {
+   async validateProducts(ids: number[]) {
+      try {
+         const productsIds = Array.from(new Set(ids))
 
+         const products = await this.prisma.product.findMany({
+            where: {
+               id: {
+                  in: productsIds
+               }
+            }
+         })
+
+         if (ids.length !== products.length) {
+            throw new RpcException({
+               status: HttpStatus.BAD_REQUEST,
+               message: "Some Products aren't found"
+            });
+         }
+
+         return [...products];
+      } catch (error) {
+         this.handlerExceptions(error);
+      }
+   }
+
+   private handlerExceptions(error: any) {
+      
       if (error.error.status === HttpStatus.NOT_FOUND) {
          throw new RpcException({ status: HttpStatus.NOT_FOUND, message: error.error.message })
       }
-      
+
+      if (error.error.status === HttpStatus.BAD_REQUEST ) {
+         throw new RpcException({ status: HttpStatus.BAD_REQUEST, message: error.error.message })
+      }
+
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
          if (error.code === 'P2002') {
             throw new RpcException({ status: HttpStatus.BAD_REQUEST, message: 'Error: instance/attribute duplicate' })
