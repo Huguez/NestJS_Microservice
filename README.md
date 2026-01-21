@@ -20,21 +20,23 @@
 <h3 align="left">Run in development</h3>
 
 1.- Clone the repository
-```
-git clone https://github.com/Huguez/NestJS_Microservice.git
+```bash
+$ git clone https://github.com/Huguez/NestJS_Microservice.git
 ```
 
 2.- Install dependencies
-```
-npm install
+```bash
+$ npm install
 ```
 
 3.- rename .env.template to .env and write variables
 ```
-PORT = *******
+PORT         = *******
+DATABASE_URL = *******
+NATS_SERVERS = *******
 ```
 
 5.- Run the service in development
-```
-npm run dev
+```$
+$ npm run dev
 ```
